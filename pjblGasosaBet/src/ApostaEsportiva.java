@@ -4,11 +4,11 @@ public class ApostaEsportiva extends Aposta {
     private double oddsTime2;
     private String tipoAposta;
 
-    @Override
+
     public void calcularPagamento() {
     }
 
-    @Override
+
     public void verificarResultado() {
     }
 
