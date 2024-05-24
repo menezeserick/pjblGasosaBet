@@ -3,6 +3,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public abstract class Aposta {
     protected int idAposta;
@@ -12,19 +15,14 @@ public abstract class Aposta {
     private static List<Aposta> historicoApostas = new ArrayList<>();
 
     public Aposta() {
-        // gerar id de aposta
         this.idAposta = gerarIdUnico();
-        // atribui data atual apra cada valor de aposta inserido
         this.dataAposta = new Date();
-        // atribui aposta a um historico
-        historicoApostas.add(this);
     }
 
     private int gerarIdUnico() {
         UUID uuid = UUID.randomUUID();
         long leastSignificantBits = uuid.getLeastSignificantBits();
-        int id = (int) (leastSignificantBits & Integer.MAX_VALUE);
-        return id;
+        return (int) (leastSignificantBits & Integer.MAX_VALUE);
     }
 
     public abstract void calcularPagamento();
@@ -37,14 +35,13 @@ public abstract class Aposta {
             System.out.println("Valor da aposta inválido. Digite um valor positivo:");
             valorAposta = scanner.nextDouble();
         }
-        // atualizar data sempre que método é chamado
         dataAposta = new Date();
     }
 
     public double getValorAposta() {
         return valorAposta;
     }
-    
+
     public int getIdAposta() {
         return idAposta;
     }
@@ -70,5 +67,26 @@ public abstract class Aposta {
             System.out.println("Ganho Total: R$ " + aposta.getGanhoTotal());
             System.out.println("-----------------------------------");
         }
+    }
+
+    public static void salvarApostaNoArquivo(Aposta aposta) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("historico_apostas.txt", true))) {
+            writer.write("ID: " + aposta.getIdAposta());
+            writer.newLine();
+            writer.write("Valor: R$ " + aposta.getValorAposta());
+            writer.newLine();
+            writer.write("Data: " + aposta.getDataAposta());
+            writer.newLine();
+            writer.write("Ganho Total: R$ " + aposta.getGanhoTotal());
+            writer.newLine();
+            writer.write("-----------------------------------");
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar histórico: " + e.getMessage());
+        }
+    }
+    public static void adicionarApostaNoArquivo(Aposta aposta) {
+        historicoApostas.add(aposta);
+        salvarApostaNoArquivo(aposta);
     }
 }

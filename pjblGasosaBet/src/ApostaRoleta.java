@@ -88,7 +88,7 @@ public class ApostaRoleta extends Aposta {
         }
 
         setGanhoTotal(ganhoTotal);
-
+        Aposta.adicionarApostaNoArquivo(this);
         exibirResultadoAposta(valorAposta, corAposta, corVencedora, jogadorGanhou, ganhoTotal);
     }
 
