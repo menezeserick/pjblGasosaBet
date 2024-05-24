@@ -47,13 +47,14 @@ public class ApostaRoleta extends Aposta {
         return corAposta == corVencedora;
     }
 
-    public static void exibirResultadoAposta(double valorAposta, int corAposta, int corVencedora, boolean jogadorGanhou) {
+    public static void exibirResultadoAposta(double valorAposta, int corAposta, int corVencedora, boolean jogadorGanhou, double ganhoTotal) {
         System.out.println("=====================================");
         System.out.println("Resultado da Aposta:");
         System.out.println("Valor da Aposta: R$" + valorAposta);
         System.out.println("Cor da Aposta: " + obterNomeCor(corAposta));
         System.out.println("Cor Vencedora: " + obterNomeCor(corVencedora));
         System.out.println("Jogador Ganhou: " + (jogadorGanhou ? "Sim" : "Não"));
+        System.out.println("Ganho Total: R$" + ganhoTotal);
         System.out.println("=====================================");
     }
 
@@ -77,11 +78,22 @@ public class ApostaRoleta extends Aposta {
         int corVencedora = girarRoleta(random);
         boolean jogadorGanhou = verificarVitoria(corAposta, corVencedora);
 
-        exibirResultadoAposta(valorAposta, corAposta, corVencedora, jogadorGanhou);
+        double ganhoTotal = 0;
+        if (jogadorGanhou) {
+            if (corVencedora == PRETO || corVencedora == VERMELHO) {
+                ganhoTotal = valorAposta * 2;
+            } else if (corVencedora == BRANCO) {
+                ganhoTotal = valorAposta * 14;
+            }
+        }
+
+        setGanhoTotal(ganhoTotal);
+
+        exibirResultadoAposta(valorAposta, corAposta, corVencedora, jogadorGanhou, ganhoTotal);
     }
 
     @Override
     public void calcularPagamento() {
-        // implementar pagamento após sucesso da aposta(ou derrota)
+        // tirar depois
     }
 }

@@ -1,13 +1,14 @@
 import java.util.Date;
-import java.util.Scanner;
-import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.UUID;
 
 public abstract class Aposta {
     protected int idAposta;
     protected double valorAposta;
     protected Date dataAposta;
+    protected double ganhoTotal;
     private static List<Aposta> historicoApostas = new ArrayList<>();
 
     public Aposta() {
@@ -43,20 +44,31 @@ public abstract class Aposta {
     public double getValorAposta() {
         return valorAposta;
     }
+    
     public int getIdAposta() {
         return idAposta;
     }
+
     public Date getDataAposta() {
         return dataAposta;
     }
+
+    public double getGanhoTotal() {
+        return ganhoTotal;
+    }
+
+    public void setGanhoTotal(double ganhoTotal) {
+        this.ganhoTotal = ganhoTotal;
+    }
+
     public static void exibirHistoricoApostas() {
         System.out.println("Histórico de apostas:");
         for (Aposta aposta : historicoApostas) {
             System.out.println("ID: " + aposta.getIdAposta());
             System.out.println("Valor: R$ " + aposta.getValorAposta());
             System.out.println("Data: " + aposta.getDataAposta());
+            System.out.println("Ganho Total: R$ " + aposta.getGanhoTotal());
             System.out.println("-----------------------------------");
         }
     }
-
 }
