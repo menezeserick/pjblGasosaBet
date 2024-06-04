@@ -1,11 +1,12 @@
-import java.util.Date;
-
 public abstract class Deposito {
-    protected int idDeposito;
-    protected double valorDeposito;
-    protected Date dataDeposito;
+    protected double valor;
+    protected Usuario usuario;
 
-    public void processarPagamento(){}
+    public Deposito(double valor, Usuario usuario) {
+        this.valor = valor;
+        this.usuario = usuario;
+    }
 
-    public void realizarDeposito(){}
+    public abstract void processarPagamento();
+    public abstract void realizarDeposito();
 }
