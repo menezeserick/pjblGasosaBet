@@ -21,7 +21,7 @@ public class Credito extends Deposito {
     }
 
     @Override
-    public void realizarDeposito() 
+    public void realizarDeposito(){
         processarPagamento();
     }
 }
