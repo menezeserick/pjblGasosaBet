@@ -1,5 +1,4 @@
 import java.util.Random;
-import java.util.Scanner;
 
 public class ApostaRoleta extends Aposta {
     private static final int PRETO = 0;
@@ -10,11 +9,7 @@ public class ApostaRoleta extends Aposta {
     private static final double VERMELHO_PROBABILIDADE = 0.495;
     private static final double BRANCO_PROBABILIDADE = 0.01;
 
-    public static int obterCorAposta() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Digite a cor da sua aposta (preto, vermelho ou branco): ");
-        String corString = scanner.nextLine();
-
+    public static int obterCorAposta(String corString) {
         switch (corString.toLowerCase()) {
             case "preto":
                 return PRETO;
@@ -23,8 +18,7 @@ public class ApostaRoleta extends Aposta {
             case "branco":
                 return BRANCO;
             default:
-                System.out.println("Cor inválida. Tente novamente.");
-                return obterCorAposta();
+                throw new IllegalArgumentException("Cor inválida. Tente novamente.");
         }
     }
 
@@ -47,17 +41,6 @@ public class ApostaRoleta extends Aposta {
         return corAposta == corVencedora;
     }
 
-    public static void exibirResultadoAposta(double valorAposta, int corAposta, int corVencedora, boolean jogadorGanhou, double ganhoTotal) {
-        System.out.println("=====================================");
-        System.out.println("Resultado da Aposta:");
-        System.out.println("Valor da Aposta: R$" + valorAposta);
-        System.out.println("Cor da Aposta: " + obterNomeCor(corAposta));
-        System.out.println("Cor Vencedora: " + obterNomeCor(corVencedora));
-        System.out.println("Jogador Ganhou: " + (jogadorGanhou ? "Sim" : "Não"));
-        System.out.println("Ganho Total: R$" + ganhoTotal);
-        System.out.println("=====================================");
-    }
-
     public static String obterNomeCor(int cor) {
         switch (cor) {
             case PRETO:
@@ -71,10 +54,9 @@ public class ApostaRoleta extends Aposta {
         }
     }
 
-    public void resultadoFinal() {
+    public String resultadoFinal(String corString) {
         Random random = new Random();
-        double valorAposta = getValorAposta();
-        int corAposta = obterCorAposta();
+        int corAposta = obterCorAposta(corString);
         int corVencedora = girarRoleta(random);
         boolean jogadorGanhou = verificarVitoria(corAposta, corVencedora);
 
@@ -89,11 +71,17 @@ public class ApostaRoleta extends Aposta {
 
         setGanhoTotal(ganhoTotal);
         Aposta.adicionarApostaNoArquivo(this);
-        exibirResultadoAposta(valorAposta, corAposta, corVencedora, jogadorGanhou, ganhoTotal);
+
+        return "Resultado da Aposta:\n" +
+                "Valor da Aposta: R$ " + valorAposta + "\n" +
+                "Cor da Aposta: " + obterNomeCor(corAposta) + "\n" +
+                "Cor Vencedora: " + obterNomeCor(corVencedora) + "\n" +
+                "Jogador Ganhou: " + (jogadorGanhou ? "Sim" : "Não") + "\n" +
+                "Ganho Total: R$ " + ganhoTotal;
     }
 
     @Override
     public void calcularPagamento() {
-        // tirar depois
+        // Implementar lógica de pagamento
     }
 }

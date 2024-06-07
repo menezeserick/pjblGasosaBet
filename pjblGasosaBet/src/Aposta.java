@@ -1,7 +1,6 @@
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.UUID;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -27,15 +26,12 @@ public abstract class Aposta {
 
     public abstract void calcularPagamento();
 
-    public void definirValorAposta(Scanner scanner) {
-        System.out.print("Digite o valor da sua aposta: R$ ");
-        valorAposta = scanner.nextDouble();
-
-        while (valorAposta <= 0) {
-            System.out.println("Valor da aposta inválido. Digite um valor positivo:");
-            valorAposta = scanner.nextDouble();
+    public void definirValorAposta(double valorAposta) {
+        if (valorAposta <= 0) {
+            throw new IllegalArgumentException("Valor da aposta deve ser positivo.");
         }
-        dataAposta = new Date();
+        this.valorAposta = valorAposta;
+        this.dataAposta = new Date();
     }
 
     public double getValorAposta() {
@@ -56,6 +52,10 @@ public abstract class Aposta {
 
     public void setGanhoTotal(double ganhoTotal) {
         this.ganhoTotal = ganhoTotal;
+    }
+
+    public static List<Aposta> getHistoricoApostas() {
+        return historicoApostas;
     }
 
     public static void exibirHistoricoApostas() {
@@ -85,6 +85,7 @@ public abstract class Aposta {
             System.err.println("Erro ao salvar histórico: " + e.getMessage());
         }
     }
+
     public static void adicionarApostaNoArquivo(Aposta aposta) {
         historicoApostas.add(aposta);
         salvarApostaNoArquivo(aposta);
