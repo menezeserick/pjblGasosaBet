@@ -26,19 +26,29 @@ public class Usuario {
 
     }
 
-    public void depositar(){
-
+    public void depositar(Deposito deposito){
+        deposito.processarPagamento();
+        saldoAtual += deposito.getValorDeposito();
+        System.out.println("Depósito realizado com sucesso! Novo saldo: " + saldoAtual);
     }
 
-    public void sacar(double saldoAtual){
-
+    public void sacar(Saque saque){
+        if (saldoAtual > 0) {
+            saque.solicitarSaque();
+            saldoAtual = 0.0;
+            saque.enviarComprovante();
+            System.out.println("Saque realizado com sucesso! Novo saldo: " + saldoAtual);
+        }
+        else {
+            System.out.println("Saldo insuficiente para saque.");
+        }
     }
-    public static Usuario criarUsuario(String nome, int cpf, Date dataDeNasc, String email, String senha, String endereco, double saldoInicial) {
+    public static Usuario criarUsuario(String nome, int cpf, Date dataDeNasc, String email, String senha, String endereco, double saldoAtual) {
         if (usuarios.containsKey(email)) {
             return null; // Usuário já existe
         }
 
-        Usuario novoUsuario = new Usuario(nome, cpf, dataDeNasc, email, senha, endereco, saldoInicial);
+        Usuario novoUsuario = new Usuario(nome, cpf, dataDeNasc, email, senha, endereco, saldoAtual);
         usuarios.put(email, novoUsuario);
         return novoUsuario; // Usuário criado com sucesso
     }
