@@ -56,7 +56,7 @@ public class MainGUI {
     }
 
     private void mostrarCamposApostaEsportiva() {
-        JOptionPane.showMessageDialog(frame, "Funcionalidade de Aposta Esportiva ainda não implementada.");
+        JOptionPane.showMessageDialog(frame, "Funcionalidade de Aposta Esportiva ainda precisa implementar a interface");
     }
 
     private void mostrarCamposApostaRoleta() {
