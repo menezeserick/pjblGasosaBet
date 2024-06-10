@@ -1,54 +1,80 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
+import java.util.List;
 
 public class MainGUI {
     private JFrame frame;
     private JTextField valorField;
     private JTextField corField;
+    private JTextField depositoField;
+    private JTextField saqueField;
+    private JLabel saldoLabel;
+    private Usuario usuarioAtual;
 
     public MainGUI() {
+        usuarioAtual = Usuario.criarUsuario("Nome Exemplo", 123456789, new Date(), "email@exemplo.com", "senha123", "Endereço Exemplo", 1000.0);
+
         frame = new JFrame("Sistema de Apostas");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 300);
+        frame.setSize(800, 400);
         frame.setLayout(new BorderLayout());
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 1));
+        buttonPanel.setLayout(new GridLayout(6, 1));
 
         JButton apostaEsportivaButton = new JButton("Aposta Esportiva");
         JButton apostaRoletaButton = new JButton("Aposta em Roleta");
         JButton visualizarHistoricoButton = new JButton("Visualizar histórico de apostas");
+        JButton depositarButton = new JButton("Depositar");
+        JButton sacarButton = new JButton("Sacar");
         JButton sairButton = new JButton("Sair");
 
         apostaEsportivaButton.addActionListener(e -> mostrarCamposApostaEsportiva());
         apostaRoletaButton.addActionListener(e -> mostrarCamposApostaRoleta());
         visualizarHistoricoButton.addActionListener(e -> exibirHistorico());
+        depositarButton.addActionListener(e -> realizarDeposito());
+        sacarButton.addActionListener(e -> realizarSaque());
         sairButton.addActionListener(e -> System.exit(0));
 
         buttonPanel.add(apostaEsportivaButton);
         buttonPanel.add(apostaRoletaButton);
         buttonPanel.add(visualizarHistoricoButton);
+        buttonPanel.add(depositarButton);
+        buttonPanel.add(sacarButton);
         buttonPanel.add(sairButton);
 
         frame.add(buttonPanel, BorderLayout.WEST);
 
         JPanel apostaPanel = new JPanel();
-        apostaPanel.setLayout(new GridLayout(3, 2));
+        apostaPanel.setLayout(new GridLayout(6, 2));
 
+        JLabel saldoTituloLabel = new JLabel("Saldo Atual:");
+        saldoLabel = new JLabel("R$ " + usuarioAtual.getSaldoAtual());
         JLabel valorLabel = new JLabel("Valor da Aposta:");
         valorField = new JTextField();
         JLabel corLabel = new JLabel("Cor (Preto, Vermelho, Branco):");
         corField = new JTextField();
+        JLabel depositoLabel = new JLabel("Valor do Depósito:");
+        depositoField = new JTextField();
+        JLabel saqueLabel = new JLabel("Valor do Saque:");
+        saqueField = new JTextField();
 
         JButton apostarButton = new JButton("Apostar");
         apostarButton.addActionListener(e -> realizarApostaRoleta());
 
+        apostaPanel.add(saldoTituloLabel);
+        apostaPanel.add(saldoLabel);
         apostaPanel.add(valorLabel);
         apostaPanel.add(valorField);
         apostaPanel.add(corLabel);
         apostaPanel.add(corField);
         apostaPanel.add(new JLabel());
         apostaPanel.add(apostarButton);
+        apostaPanel.add(depositoLabel);
+        apostaPanel.add(depositoField);
+        apostaPanel.add(saqueLabel);
+        apostaPanel.add(saqueField);
 
         frame.add(apostaPanel, BorderLayout.CENTER);
 
@@ -77,6 +103,44 @@ public class MainGUI {
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(frame, e.getMessage());
         }
+    }
+
+    private void realizarDeposito() {
+        try {
+            double valor = Double.parseDouble(depositoField.getText());
+            Deposito deposito = new Deposito(valor);
+            usuarioAtual.depositar(deposito);
+            JOptionPane.showMessageDialog(frame, "Depósito realizado com sucesso!");
+            depositoField.setText("");
+            atualizarSaldo();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage());
+        }
+    }
+
+    private void realizarSaque() {
+        try {
+            double valor = Double.parseDouble(saqueField.getText());
+            if (valor > usuarioAtual.getSaldoAtual()) {
+                JOptionPane.showMessageDialog(frame, "Saldo insuficiente para o saque.");
+                return;
+            }
+            Saque saque = new Saque(valor);
+            usuarioAtual.sacar(saque);
+            JOptionPane.showMessageDialog(frame, "Saque realizado com sucesso!");
+            saqueField.setText("");
+            atualizarSaldo();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage());
+        }
+    }
+
+    private void atualizarSaldo() {
+        saldoLabel.setText("R$ " + usuarioAtual.getSaldoAtual());
     }
 
     private void exibirHistorico() {

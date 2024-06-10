@@ -32,17 +32,18 @@ public class Usuario {
         System.out.println("Depósito realizado com sucesso! Novo saldo: " + saldoAtual);
     }
 
-    public void sacar(Saque saque){
-        if (saldoAtual > 0) {
+    public void sacar(Saque saque) {
+        double valorSaque = saque.getValorSaque();
+        if (saldoAtual >= valorSaque) {
             saque.solicitarSaque();
-            saldoAtual = 0.0;
+            saldoAtual -= valorSaque;
             saque.enviarComprovante();
             System.out.println("Saque realizado com sucesso! Novo saldo: " + saldoAtual);
-        }
-        else {
+        } else {
             System.out.println("Saldo insuficiente para saque.");
         }
     }
+
     public static Usuario criarUsuario(String nome, int cpf, Date dataDeNasc, String email, String senha, String endereco, double saldoAtual) {
         if (usuarios.containsKey(email)) {
             return null; // Usuário já existe

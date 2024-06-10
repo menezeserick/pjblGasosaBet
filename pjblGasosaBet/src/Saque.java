@@ -1,14 +1,22 @@
 public class Saque {
-    private String chavePix;
+    private double valorSaque;
 
-    public void enviarComprovante(){
-        System.out.println("Comprovante de saque enviado.");
+    public Saque(double valorSaque) {
+        if (valorSaque <= 0) {
+            throw new IllegalArgumentException("O valor do saque deve ser positivo.");
+        }
+        this.valorSaque = valorSaque;
     }
 
-    public void solicitarSaque(){
-        System.out.println("Saque solicitado.");
-
-        
+    public double getValorSaque() {
+        return valorSaque;
     }
 
+    public void solicitarSaque() {
+        // Lógica para solicitar o saque
+    }
+
+    public void enviarComprovante() {
+        // Lógica para enviar o comprovante
+    }
 }

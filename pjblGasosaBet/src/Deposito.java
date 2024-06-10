@@ -1,21 +1,18 @@
-import java.util.Date;
+public class Deposito {
+    private double valorDeposito;
 
-public abstract class Deposito {
-    protected double idDeposito;
-    protected double valorDeposito;
-    protected Date dataDeposito;
-    protected Usuario usuario;
-    public Deposito(Usuario usuario, int idDeposito, double valorDeposito, Date dataDeposito) {
-        this.idDeposito = idDeposito;
+    public Deposito(double valorDeposito) {
+        if (valorDeposito <= 0) {
+            throw new IllegalArgumentException("O valor do depósito deve ser positivo.");
+        }
         this.valorDeposito = valorDeposito;
-        this.dataDeposito = dataDeposito;
     }
 
-    public abstract void processarPagamento();
-    public abstract void realizarDeposito();
-
-    public double getValorDeposito(){
+    public double getValorDeposito() {
         return valorDeposito;
     }
-}
 
+    public void processarPagamento() {
+        // Lógica para processar o pagamento
+    }
+}
