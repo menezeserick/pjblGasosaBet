@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.Date;
-import java.util.List;
 
 public class MainGUI {
     private JFrame frame;
@@ -94,10 +93,17 @@ public class MainGUI {
         try {
             double valor = Double.parseDouble(valorField.getText());
             String cor = corField.getText();
-            ApostaRoleta apostaRoleta = new ApostaRoleta();
-            apostaRoleta.definirValorAposta(valor);
-            String resultado = apostaRoleta.resultadoFinal(cor);
-            JOptionPane.showMessageDialog(frame, resultado);
+
+            if (usuarioAtual.getSaldoAtual() < valor) {
+                JOptionPane.showMessageDialog(frame, "Saldo insuficiente para realizar a aposta.");
+                return;
+            }
+
+            ApostaRoleta apostaRoleta = new ApostaRoleta(valor, cor);
+            String resultado = apostaRoleta.resultadoFinal();
+            usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() + apostaRoleta.getGanhoTotal());
+            atualizarSaldo(); // Atualiza o saldo exibido
+            JOptionPane.showMessageDialog(frame, resultado + "\nSeu saldo atual: R$ " + usuarioAtual.getSaldoAtual());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(frame, "Por favor, insira um valor válido.");
         } catch (IllegalArgumentException e) {
@@ -112,7 +118,7 @@ public class MainGUI {
             usuarioAtual.depositar(deposito);
             JOptionPane.showMessageDialog(frame, "Depósito realizado com sucesso!");
             depositoField.setText("");
-            atualizarSaldo();
+            atualizarSaldo(); // Atualiza o saldo exibido
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
         } catch (IllegalArgumentException e) {
@@ -131,7 +137,7 @@ public class MainGUI {
             usuarioAtual.sacar(saque);
             JOptionPane.showMessageDialog(frame, "Saque realizado com sucesso!");
             saqueField.setText("");
-            atualizarSaldo();
+            atualizarSaldo(); // Atualiza o saldo exibido
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
         } catch (IllegalArgumentException e) {

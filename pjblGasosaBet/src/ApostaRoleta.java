@@ -9,6 +9,13 @@ public class ApostaRoleta extends Aposta {
     private static final double VERMELHO_PROBABILIDADE = 0.495;
     private static final double BRANCO_PROBABILIDADE = 0.01;
 
+    private int corAposta; // Adicionado para armazenar a cor da aposta
+
+    public ApostaRoleta(double valorAposta, String corAposta) {
+        this.valorAposta = valorAposta;
+        this.corAposta = obterCorAposta(corAposta);
+    }
+
     public static int obterCorAposta(String corString) {
         switch (corString.toLowerCase()) {
             case "preto":
@@ -54,9 +61,8 @@ public class ApostaRoleta extends Aposta {
         }
     }
 
-    public String resultadoFinal(String corString) {
+    public String resultadoFinal() {
         Random random = new Random();
-        int corAposta = obterCorAposta(corString);
         int corVencedora = girarRoleta(random);
         boolean jogadorGanhou = verificarVitoria(corAposta, corVencedora);
 

@@ -33,13 +33,18 @@ class ApostaRoletaDialog extends JDialog {
     private class ConfirmarButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            double valorAposta = Double.parseDouble(valorApostaField.getText());
-            String corAposta = corApostaField.getText();
+            try {
+                double valorAposta = Double.parseDouble(valorApostaField.getText());
+                String corAposta = corApostaField.getText();
 
-            ApostaRoleta minhaAposta = new ApostaRoleta();
-            minhaAposta.definirValorAposta(valorAposta);
-            minhaAposta.resultadoFinal(corAposta);
-            dispose();
+                ApostaRoleta minhaAposta = new ApostaRoleta(valorAposta, corAposta); // Passa os argumentos para o construtor
+                minhaAposta.resultadoFinal(); // Chama o método resultadoFinal sem parâmetros
+                dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(ApostaRoletaDialog.this, "Valor da aposta inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(ApostaRoletaDialog.this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
