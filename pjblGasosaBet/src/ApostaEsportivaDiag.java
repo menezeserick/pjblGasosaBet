@@ -3,14 +3,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-class ApostaRoletaDialog extends JDialog {
+class ApostaEsportivaDiag extends JDialog {
     private JTextField valorApostaField;
-    private JComboBox<String> corApostaCombo;
+    private JComboBox<String> timeApostaCombo;
     private Usuario usuarioAtual;
     private Runnable atualizarSaldoCallback;
 
-    public ApostaRoletaDialog(JFrame parent, Usuario usuario, Runnable atualizarSaldoCallback) {
-        super(parent, "Aposta em Roleta", true);
+    public ApostaEsportivaDiag(JFrame parent, Usuario usuario, Runnable atualizarSaldoCallback) {
+        super(parent, "Aposta Esportiva", true);
         this.usuarioAtual = usuario;
         this.atualizarSaldoCallback = atualizarSaldoCallback;
         setLayout(new GridLayout(3, 2));
@@ -19,17 +19,17 @@ class ApostaRoletaDialog extends JDialog {
         JLabel valorApostaLabel = new JLabel("Valor da Aposta:");
         valorApostaField = new JTextField();
 
-        JLabel corApostaLabel = new JLabel("Cor da Aposta:");
-        String[] cores = {"Preto", "Vermelho", "Branco"};
-        corApostaCombo = new JComboBox<>(cores);
+        JLabel timeApostaLabel = new JLabel("Time da Aposta:");
+        String[] times = {"Real Madrid", "Barcelona"};
+        timeApostaCombo = new JComboBox<>(times);
 
         JButton confirmarButton = new JButton("Confirmar");
         confirmarButton.addActionListener(new ConfirmarButtonListener());
 
         add(valorApostaLabel);
         add(valorApostaField);
-        add(corApostaLabel);
-        add(corApostaCombo);
+        add(timeApostaLabel);
+        add(timeApostaCombo);
         add(new JLabel());
         add(confirmarButton);
 
@@ -41,29 +41,29 @@ class ApostaRoletaDialog extends JDialog {
         public void actionPerformed(ActionEvent e) {
             try {
                 double valorAposta = Double.parseDouble(valorApostaField.getText());
-                String corAposta = (String) corApostaCombo.getSelectedItem();
+                String timeAposta = (String) timeApostaCombo.getSelectedItem();
 
                 if (usuarioAtual.getSaldoAtual() < valorAposta) {
-                    JOptionPane.showMessageDialog(ApostaRoletaDialog.this, "Saldo insuficiente para realizar a aposta.");
+                    JOptionPane.showMessageDialog(ApostaEsportivaDiag.this, "Saldo insuficiente para realizar a aposta.");
                     return;
                 }
 
                 usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() - valorAposta);
-                ApostaRoleta minhaAposta = new ApostaRoleta(valorAposta, corAposta);
+                ApostaEsportiva minhaAposta = new ApostaEsportiva(valorAposta, timeAposta);
                 String resultado = minhaAposta.resultadoFinal();
 
                 double ganhoTotal = minhaAposta.getGanhoTotal();
                 if (ganhoTotal > 0) {
-                    usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() + ganhoTotal);
+                    usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() + ganhoTotal + valorAposta);
                 }
 
-                JOptionPane.showMessageDialog(ApostaRoletaDialog.this, resultado + "\nSeu saldo atual: R$ " + usuarioAtual.getSaldoAtual());
-                atualizarSaldoCallback.run();
+                JOptionPane.showMessageDialog(ApostaEsportivaDiag.this, resultado + "\nSeu saldo atual: R$ " + usuarioAtual.getSaldoAtual());
+                atualizarSaldoCallback.run(); // Atualiza o saldo na GUI principal
                 dispose();
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(ApostaRoletaDialog.this, "Valor da aposta inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(ApostaEsportivaDiag.this, "Valor da aposta inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
             } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(ApostaRoletaDialog.this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(ApostaEsportivaDiag.this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

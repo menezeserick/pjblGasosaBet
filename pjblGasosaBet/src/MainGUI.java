@@ -1,114 +1,78 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.Date;
 
 public class MainGUI {
     private JFrame frame;
-    private JTextField valorField;
-    private JTextField corField;
     private JLabel saldoLabel;
     private Usuario usuarioAtual;
 
     public MainGUI() {
-        usuarioAtual = Usuario.criarUsuario("Nome Exemplo", 123456789, new Date(), "email@exemplo.com", "senha123", "Endereço Exemplo", 1000.0);
+        usuarioAtual = Usuario.criarUsuario("Nome Exemplo", 123456789, "email@exemplo.com", "senha123", 1000.0);
 
         frame = new JFrame("Sistema de Apostas");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 400);
+        frame.setSize(750, 400);
         frame.setLayout(new BorderLayout());
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(6, 1));
+        JPanel buttonPanelLeft = new JPanel();
+        buttonPanelLeft.setLayout(new GridLayout(4, 1, 10, 10));
+        buttonPanelLeft.setBorder(BorderFactory.createTitledBorder("Opções de Aposta"));
 
         JButton apostaEsportivaButton = new JButton("Aposta Esportiva");
         JButton apostaRoletaButton = new JButton("Aposta em Roleta");
-        JButton visualizarHistoricoButton = new JButton("Visualizar histórico de apostas");
-        JButton depositarButton = new JButton("Depositar");
+        JButton visualizarHistoricoButton = new JButton("Visualizar Histórico de Apostas");
+
+        apostaEsportivaButton.addActionListener(e -> new ApostaEsportivaDiag(frame, usuarioAtual, this::atualizarSaldo));
+        apostaRoletaButton.addActionListener(e -> new ApostaRoletaDialog(frame, usuarioAtual, this::atualizarSaldo));
+        visualizarHistoricoButton.addActionListener(e -> exibirHistorico());
+
+        buttonPanelLeft.add(apostaEsportivaButton);
+        buttonPanelLeft.add(apostaRoletaButton);
+        buttonPanelLeft.add(visualizarHistoricoButton);
+
+        frame.add(buttonPanelLeft, BorderLayout.WEST);
+
+        JPanel buttonPanelRight = new JPanel();
+        buttonPanelRight.setLayout(new GridLayout(4, 1, 10, 10));
+        buttonPanelRight.setBorder(BorderFactory.createTitledBorder("Gerenciamento de Conta"));
+
+        JButton depositarButton = new JButton("        Depositar        ");
         JButton sacarButton = new JButton("Sacar");
         JButton sairButton = new JButton("Sair");
 
-        apostaEsportivaButton.addActionListener(e -> mostrarCamposApostaEsportiva());
-        apostaRoletaButton.addActionListener(e -> mostrarCamposApostaRoleta());
-        visualizarHistoricoButton.addActionListener(e -> exibirHistorico());
         depositarButton.addActionListener(e -> mostrarDialogoDeposito());
         sacarButton.addActionListener(e -> mostrarDialogoSaque());
         sairButton.addActionListener(e -> System.exit(0));
 
-        buttonPanel.add(apostaEsportivaButton);
-        buttonPanel.add(apostaRoletaButton);
-        buttonPanel.add(visualizarHistoricoButton);
-        buttonPanel.add(depositarButton);
-        buttonPanel.add(sacarButton);
-        buttonPanel.add(sairButton);
+        buttonPanelRight.add(depositarButton);
+        buttonPanelRight.add(sacarButton);
+        buttonPanelRight.add(sairButton);
 
-        frame.add(buttonPanel, BorderLayout.WEST);
+        frame.add(buttonPanelRight, BorderLayout.EAST);
 
-        JPanel apostaPanel = new JPanel();
-        apostaPanel.setLayout(new GridLayout(4, 2));
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        infoPanel.setBorder(BorderFactory.createTitledBorder("Informações do Usuário"));
 
-        JLabel saldoTituloLabel = new JLabel("Saldo Atual:");
-        saldoLabel = new JLabel("R$ " + usuarioAtual.getSaldoAtual());
-        JLabel valorLabel = new JLabel("Valor da Aposta:");
-        valorField = new JTextField();
-        JLabel corLabel = new JLabel("Cor (Preto, Vermelho, Branco):");
-        corField = new JTextField();
+        JLabel nomeLabel = new JLabel("Nome: " + usuarioAtual.getNome());
+        JLabel cpfLabel = new JLabel("CPF: " + usuarioAtual.getCpf());
+        JLabel emailLabel = new JLabel("E-mail: " + usuarioAtual.getEmail());
+        saldoLabel = new JLabel("Saldo Atual: R$ " + usuarioAtual.getSaldoAtual());
 
-        JButton apostarButton = new JButton("Apostar");
-        apostarButton.addActionListener(e -> realizarApostaRoleta());
+        nomeLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        cpfLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        emailLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        saldoLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        saldoLabel.setForeground(Color.BLUE);
 
-        apostaPanel.add(saldoTituloLabel);
-        apostaPanel.add(saldoLabel);
-        apostaPanel.add(valorLabel);
-        apostaPanel.add(valorField);
-        apostaPanel.add(corLabel);
-        apostaPanel.add(corField);
-        apostaPanel.add(new JLabel());
-        apostaPanel.add(apostarButton);
+        infoPanel.add(nomeLabel);
+        infoPanel.add(cpfLabel);
+        infoPanel.add(emailLabel);
+        infoPanel.add(saldoLabel);
 
-        frame.add(apostaPanel, BorderLayout.CENTER);
+        frame.add(infoPanel, BorderLayout.CENTER);
 
         frame.setVisible(true);
-    }
-
-    private void mostrarCamposApostaEsportiva() {
-        JOptionPane.showMessageDialog(frame, "Funcionalidade de Aposta Esportiva ainda precisa implementar a interface");
-    }
-
-    private void mostrarCamposApostaRoleta() {
-        valorField.setVisible(true);
-        corField.setVisible(true);
-    }
-
-    private void realizarApostaRoleta() {
-        try {
-            double valor = Double.parseDouble(valorField.getText());
-            String cor = corField.getText();
-
-            if (usuarioAtual.getSaldoAtual() < valor) {
-                JOptionPane.showMessageDialog(frame, "Saldo insuficiente para realizar a aposta.");
-                return;
-            }
-
-            // Descontar o valor da aposta do saldo do usuário
-            usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() - valor);
-            atualizarSaldo(); // Atualiza o saldo exibido na GUI
-
-            ApostaRoleta apostaRoleta = new ApostaRoleta(valor, cor);
-            String resultado = apostaRoleta.resultadoFinal();
-
-            // Atualiza o saldo do usuário com os ganhos (se houver)
-            double ganhoTotal = apostaRoleta.getGanhoTotal();
-            if (ganhoTotal > 0) {
-                usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() + ganhoTotal + valor);
-            }
-
-            atualizarSaldo(); // Atualiza o saldo exibido na GUI
-            JOptionPane.showMessageDialog(frame, resultado + "\nSeu saldo atual: R$ " + usuarioAtual.getSaldoAtual());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(frame, "Por favor, insira um valor válido.");
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(frame, e.getMessage());
-        }
     }
 
     private void mostrarDialogoDeposito() {
@@ -156,6 +120,7 @@ public class MainGUI {
             historyArea.append("ID: " + aposta.getIdAposta() + "\n");
             historyArea.append("Valor: R$ " + aposta.getValorAposta() + "\n");
             historyArea.append("Data: " + aposta.getDataAposta() + "\n");
+            historyArea.append("Tipo: " + aposta.getTipoAposta() + "\n");
             historyArea.append("Ganho Total: R$ " + aposta.getGanhoTotal() + "\n");
             historyArea.append("-----------------------------------\n");
         }
@@ -164,7 +129,7 @@ public class MainGUI {
     }
 
     private void atualizarSaldo() {
-        saldoLabel.setText("R$ " + usuarioAtual.getSaldoAtual());
+        saldoLabel.setText("Saldo Atual: R$ " + usuarioAtual.getSaldoAtual());
     }
 
     public static void main(String[] args) {

@@ -11,6 +11,7 @@ public abstract class Aposta {
     protected double valorAposta;
     protected Date dataAposta;
     protected double ganhoTotal;
+    protected String tipoAposta;
     private static List<Aposta> historicoApostas = new ArrayList<>();
 
     public Aposta() {
@@ -54,6 +55,14 @@ public abstract class Aposta {
         this.ganhoTotal = ganhoTotal;
     }
 
+    public String getTipoAposta() {
+        return tipoAposta;
+    }
+
+    public void setTipoAposta(String tipoAposta) {
+        this.tipoAposta = tipoAposta;
+    }
+
     public static List<Aposta> getHistoricoApostas() {
         return historicoApostas;
     }
@@ -64,6 +73,7 @@ public abstract class Aposta {
             System.out.println("ID: " + aposta.getIdAposta());
             System.out.println("Valor: R$ " + aposta.getValorAposta());
             System.out.println("Data: " + aposta.getDataAposta());
+            System.out.println("Tipo: " + aposta.getTipoAposta());  // Mostrar tipo de aposta
             System.out.println("Ganho Total: R$ " + aposta.getGanhoTotal());
             System.out.println("-----------------------------------");
         }
@@ -76,6 +86,8 @@ public abstract class Aposta {
             writer.write("Valor: R$ " + aposta.getValorAposta());
             writer.newLine();
             writer.write("Data: " + aposta.getDataAposta());
+            writer.newLine();
+            writer.write("Tipo: " + aposta.getTipoAposta());
             writer.newLine();
             writer.write("Ganho Total: R$ " + aposta.getGanhoTotal());
             writer.newLine();

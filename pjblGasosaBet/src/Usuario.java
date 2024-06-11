@@ -1,24 +1,19 @@
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Usuario {
     private String nome;
     private int cpf;
-    private Date dataDeNasc;
     private String email;
     private String senha;
-    private String endereco;
     private double saldoAtual;
     private static Map<String, Usuario> usuarios = new HashMap<>();
 
-    private Usuario(String nome, int cpf, Date dataDeNasc, String email, String senha, String endereco, double saldoInicial) {
+    private Usuario(String nome, int cpf, String email, String senha, double saldoInicial) {
         this.nome = nome;
         this.cpf = cpf;
-        this.dataDeNasc = dataDeNasc;
         this.email = email;
         this.senha = senha;
-        this.endereco = endereco;
         this.saldoAtual = saldoInicial;
     }
 
@@ -44,12 +39,12 @@ public class Usuario {
         }
     }
 
-    public static Usuario criarUsuario(String nome, int cpf, Date dataDeNasc, String email, String senha, String endereco, double saldoAtual) {
+    public static Usuario criarUsuario(String nome, int cpf, String email, String senha, double saldoAtual) {
         if (usuarios.containsKey(email)) {
             return null; // Usuário já existe
         }
 
-        Usuario novoUsuario = new Usuario(nome, cpf, dataDeNasc, email, senha, endereco, saldoAtual);
+        Usuario novoUsuario = new Usuario(nome, cpf, email, senha, saldoAtual);
         usuarios.put(email, novoUsuario);
         return novoUsuario; // Usuário criado com sucesso
     }
@@ -62,6 +57,18 @@ public class Usuario {
         }
 
         return null; // Falha no login
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getCpf() {
+        return cpf;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public double getSaldoAtual() {

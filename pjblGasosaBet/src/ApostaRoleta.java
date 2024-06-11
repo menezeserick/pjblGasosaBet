@@ -14,6 +14,7 @@ public class ApostaRoleta extends Aposta {
     public ApostaRoleta(double valorAposta, String corAposta) {
         this.valorAposta = valorAposta;
         this.corAposta = obterCorAposta(corAposta);
+        this.tipoAposta = "Aposta em Roleta";
     }
 
     public static int obterCorAposta(String corString) {
