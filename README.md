@@ -1,4 +1,4 @@
-# GasosaBet
+# pjblGasosaBet
 
 GasosaBet é um projeto de software de uma casa de apostas online que oferece aos usuários a oportunidade de participar de jogos de cassino e apostas esportivas. O projeto é implementado na linguagem Java com uma abordagem de programação orientada a objetos.
 
