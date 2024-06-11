@@ -6,8 +6,6 @@ public class MainGUI {
     private JFrame frame;
     private JTextField valorField;
     private JTextField corField;
-    private JTextField depositoField;
-    private JTextField saqueField;
     private JLabel saldoLabel;
     private Usuario usuarioAtual;
 
@@ -32,8 +30,8 @@ public class MainGUI {
         apostaEsportivaButton.addActionListener(e -> mostrarCamposApostaEsportiva());
         apostaRoletaButton.addActionListener(e -> mostrarCamposApostaRoleta());
         visualizarHistoricoButton.addActionListener(e -> exibirHistorico());
-        depositarButton.addActionListener(e -> realizarDeposito());
-        sacarButton.addActionListener(e -> realizarSaque());
+        depositarButton.addActionListener(e -> mostrarDialogoDeposito());
+        sacarButton.addActionListener(e -> mostrarDialogoSaque());
         sairButton.addActionListener(e -> System.exit(0));
 
         buttonPanel.add(apostaEsportivaButton);
@@ -46,7 +44,7 @@ public class MainGUI {
         frame.add(buttonPanel, BorderLayout.WEST);
 
         JPanel apostaPanel = new JPanel();
-        apostaPanel.setLayout(new GridLayout(6, 2));
+        apostaPanel.setLayout(new GridLayout(4, 2));
 
         JLabel saldoTituloLabel = new JLabel("Saldo Atual:");
         saldoLabel = new JLabel("R$ " + usuarioAtual.getSaldoAtual());
@@ -54,10 +52,6 @@ public class MainGUI {
         valorField = new JTextField();
         JLabel corLabel = new JLabel("Cor (Preto, Vermelho, Branco):");
         corField = new JTextField();
-        JLabel depositoLabel = new JLabel("Valor do Depósito:");
-        depositoField = new JTextField();
-        JLabel saqueLabel = new JLabel("Valor do Saque:");
-        saqueField = new JTextField();
 
         JButton apostarButton = new JButton("Apostar");
         apostarButton.addActionListener(e -> realizarApostaRoleta());
@@ -70,10 +64,6 @@ public class MainGUI {
         apostaPanel.add(corField);
         apostaPanel.add(new JLabel());
         apostaPanel.add(apostarButton);
-        apostaPanel.add(depositoLabel);
-        apostaPanel.add(depositoField);
-        apostaPanel.add(saqueLabel);
-        apostaPanel.add(saqueField);
 
         frame.add(apostaPanel, BorderLayout.CENTER);
 
@@ -99,10 +89,20 @@ public class MainGUI {
                 return;
             }
 
+            // Descontar o valor da aposta do saldo do usuário
+            usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() - valor);
+            atualizarSaldo(); // Atualiza o saldo exibido na GUI
+
             ApostaRoleta apostaRoleta = new ApostaRoleta(valor, cor);
             String resultado = apostaRoleta.resultadoFinal();
-            usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() + apostaRoleta.getGanhoTotal());
-            atualizarSaldo(); // Atualiza o saldo exibido
+
+            // Atualiza o saldo do usuário com os ganhos (se houver)
+            double ganhoTotal = apostaRoleta.getGanhoTotal();
+            if (ganhoTotal > 0) {
+                usuarioAtual.setSaldoAtual(usuarioAtual.getSaldoAtual() + ganhoTotal + valor);
+            }
+
+            atualizarSaldo(); // Atualiza o saldo exibido na GUI
             JOptionPane.showMessageDialog(frame, resultado + "\nSeu saldo atual: R$ " + usuarioAtual.getSaldoAtual());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(frame, "Por favor, insira um valor válido.");
@@ -111,42 +111,42 @@ public class MainGUI {
         }
     }
 
-    private void realizarDeposito() {
-        try {
-            double valor = Double.parseDouble(depositoField.getText());
-            Deposito deposito = new Deposito(valor);
-            usuarioAtual.depositar(deposito);
-            JOptionPane.showMessageDialog(frame, "Depósito realizado com sucesso!");
-            depositoField.setText("");
-            atualizarSaldo(); // Atualiza o saldo exibido
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(frame, e.getMessage());
-        }
-    }
-
-    private void realizarSaque() {
-        try {
-            double valor = Double.parseDouble(saqueField.getText());
-            if (valor > usuarioAtual.getSaldoAtual()) {
-                JOptionPane.showMessageDialog(frame, "Saldo insuficiente para o saque.");
-                return;
+    private void mostrarDialogoDeposito() {
+        String valor = JOptionPane.showInputDialog(frame, "Digite o valor do depósito:", "Depositar", JOptionPane.PLAIN_MESSAGE);
+        if (valor != null) {
+            try {
+                double valorDeposito = Double.parseDouble(valor);
+                Deposito deposito = new Deposito(valorDeposito);
+                usuarioAtual.depositar(deposito);
+                JOptionPane.showMessageDialog(frame, "Depósito realizado com sucesso!");
+                atualizarSaldo(); // Atualiza o saldo exibido na GUI
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage());
             }
-            Saque saque = new Saque(valor);
-            usuarioAtual.sacar(saque);
-            JOptionPane.showMessageDialog(frame, "Saque realizado com sucesso!");
-            saqueField.setText("");
-            atualizarSaldo(); // Atualiza o saldo exibido
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(frame, e.getMessage());
         }
     }
 
-    private void atualizarSaldo() {
-        saldoLabel.setText("R$ " + usuarioAtual.getSaldoAtual());
+    private void mostrarDialogoSaque() {
+        String valor = JOptionPane.showInputDialog(frame, "Digite o valor do saque:", "Sacar", JOptionPane.PLAIN_MESSAGE);
+        if (valor != null) {
+            try {
+                double valorSaque = Double.parseDouble(valor);
+                if (valorSaque > usuarioAtual.getSaldoAtual()) {
+                    JOptionPane.showMessageDialog(frame, "Saldo insuficiente para realizar o saque.");
+                } else {
+                    Saque saque = new Saque(valorSaque);
+                    usuarioAtual.sacar(saque);
+                    JOptionPane.showMessageDialog(frame, "Saque realizado com sucesso!");
+                    atualizarSaldo(); // Atualiza o saldo exibido na GUI
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage());
+            }
+        }
     }
 
     private void exibirHistorico() {
@@ -163,7 +163,11 @@ public class MainGUI {
         JOptionPane.showMessageDialog(frame, scrollPane, "Histórico de Apostas", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    private void atualizarSaldo() {
+        saldoLabel.setText("R$ " + usuarioAtual.getSaldoAtual());
+    }
+
     public static void main(String[] args) {
-        new MainGUI();
+        SwingUtilities.invokeLater(MainGUI::new);
     }
 }
