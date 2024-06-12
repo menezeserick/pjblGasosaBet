@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class MainGUI {
@@ -7,15 +8,46 @@ public class MainGUI {
     private Usuario usuarioAtual;
 
     public MainGUI() {
-        usuarioAtual = Usuario.criarUsuario("Nome Exemplo", 123456789, "email@exemplo.com", "senha123", 1000.0);
-
         frame = new JFrame("Sistema de Apostas");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(750, 400);
-        frame.setLayout(new BorderLayout());
+        frame.setLayout(new BorderLayout(10, 10));
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 1, 10, 10));
+        JButton loginButton = new JButton("Login");
+        JButton registroButton = new JButton("Registro");
+
+        loginButton.addActionListener(e -> {
+            LoginDialog loginDialog = new LoginDialog(frame);
+            loginDialog.setVisible(true);
+            usuarioAtual = loginDialog.getUsuario();
+            if (usuarioAtual != null) {
+                iniciarInterface();
+            }
+        });
+
+        registroButton.addActionListener(e -> {
+            RegistroDialog registroDialog = new RegistroDialog(frame);
+            registroDialog.setVisible(true);
+            usuarioAtual = registroDialog.getUsuario();
+            if (usuarioAtual != null) {
+                iniciarInterface();
+            }
+        });
+
+        panel.add(loginButton);
+        panel.add(registroButton);
+        frame.add(panel, BorderLayout.CENTER);
+
+        frame.setVisible(true);
+    }
+
+    private void iniciarInterface() {
+        frame.getContentPane().removeAll();
 
         JPanel buttonPanelLeft = new JPanel();
-        buttonPanelLeft.setLayout(new GridLayout(4, 1, 10, 10));
+        buttonPanelLeft.setLayout(new GridLayout(3, 1, 10, 10));
         buttonPanelLeft.setBorder(BorderFactory.createTitledBorder("Opções de Aposta"));
 
         JButton apostaEsportivaButton = new JButton("Aposta Esportiva");
@@ -29,14 +61,15 @@ public class MainGUI {
         buttonPanelLeft.add(apostaEsportivaButton);
         buttonPanelLeft.add(apostaRoletaButton);
         buttonPanelLeft.add(visualizarHistoricoButton);
+        buttonPanelLeft.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         frame.add(buttonPanelLeft, BorderLayout.WEST);
 
         JPanel buttonPanelRight = new JPanel();
-        buttonPanelRight.setLayout(new GridLayout(4, 1, 10, 10));
+        buttonPanelRight.setLayout(new GridLayout(3, 1, 10, 10));
         buttonPanelRight.setBorder(BorderFactory.createTitledBorder("Gerenciamento de Conta"));
 
-        JButton depositarButton = new JButton("        Depositar        ");
+        JButton depositarButton = new JButton("Depositar");
         JButton sacarButton = new JButton("Sacar");
         JButton sairButton = new JButton("Sair");
 
@@ -47,11 +80,12 @@ public class MainGUI {
         buttonPanelRight.add(depositarButton);
         buttonPanelRight.add(sacarButton);
         buttonPanelRight.add(sairButton);
+        buttonPanelRight.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         frame.add(buttonPanelRight, BorderLayout.EAST);
 
         JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        infoPanel.setLayout(new GridLayout(5, 1, 10, 10));
         infoPanel.setBorder(BorderFactory.createTitledBorder("Informações do Usuário"));
 
         JLabel nomeLabel = new JLabel("Nome: " + usuarioAtual.getNome());
@@ -69,10 +103,12 @@ public class MainGUI {
         infoPanel.add(cpfLabel);
         infoPanel.add(emailLabel);
         infoPanel.add(saldoLabel);
+        infoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         frame.add(infoPanel, BorderLayout.CENTER);
 
-        frame.setVisible(true);
+        frame.revalidate();
+        frame.repaint();
     }
 
     private void mostrarDialogoDeposito() {
@@ -83,7 +119,7 @@ public class MainGUI {
                 Deposito deposito = new Deposito(valorDeposito);
                 usuarioAtual.depositar(deposito);
                 JOptionPane.showMessageDialog(frame, "Depósito realizado com sucesso!");
-                atualizarSaldo(); // Atualiza o saldo exibido na GUI
+                atualizarSaldo(); 
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
             } catch (IllegalArgumentException e) {
@@ -103,7 +139,7 @@ public class MainGUI {
                     Saque saque = new Saque(valorSaque);
                     usuarioAtual.sacar(saque);
                     JOptionPane.showMessageDialog(frame, "Saque realizado com sucesso!");
-                    atualizarSaldo(); // Atualiza o saldo exibido na GUI
+                    atualizarSaldo();
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame, "Por favor, insira um valor numérico válido.");
