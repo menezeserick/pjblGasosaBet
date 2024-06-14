@@ -89,6 +89,5 @@ public class ApostaRoleta extends Aposta {
 
     @Override
     public void calcularPagamento() {
-        // Implementar lógica de pagamento
     }
 }
